@@ -1,0 +1,22 @@
+name: WB Analytics
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # каждый день в 9:00 UTC
+  push:
+    branches: [ main ]
+
+jobs:
+  run-wb-analytics:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - run: pip install requests pandas python-dotenv
+    - name: Run WB Analytics
+      env:
+        WB_API_TOKEN: ${{ secrets.WB_API_TOKEN }}
+      run: python main.py
