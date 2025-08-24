@@ -1,13 +1,14 @@
-from fastapi import FastAPI
-from .routers import health, ads
-from .config import settings
+import os
+import requests
+from config import BASE_URL, WB_API_TOKEN
 
-app = FastAPI(title=settings.app_name, version="0.1.0")
+# Заголовки для авторизации
+headers = {"Authorization": WB_API_TOKEN}
 
-app.include_router(health.router, prefix="/health", tags=["health"])
-app.include_router(ads.router, prefix="/wb", tags=["wildberries"])
+response = requests.get(f"{BASE_URL}/orders", headers=headers)
 
-# Запуск через: uvicorn app.main:app --app-dir backend --reload
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+if response.status_code == 200:
+    print("Подключение к API успешно!")
+    print(response.json())  # вывод первых данных
+else:
+    print("Ошибка подключения:", response.status_code, response.text)
